@@ -29,7 +29,7 @@ class PseudoDFS
       }
     }
 
-    reversePostOrder.push(Helper.topPoint);
+    reversePostOrder.push(Helper.firstPoint);
   }
 
   private void verticalDfs(Picture picture, int colIndex, int rowIndex)

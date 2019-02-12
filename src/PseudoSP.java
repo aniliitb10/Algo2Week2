@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.Stack;
 
 class PseudoSP
 {
-  private static final SimplePoint topPoint = Helper.topPoint;
+  private static final SimplePoint firstPoint = Helper.firstPoint;
 
   private final double[][] distTo;
   private final SimplePoint[][] pointTo;
@@ -33,7 +33,7 @@ class PseudoSP
       for (int colIndex = 0; colIndex < picture.width(); ++colIndex)
       {
         distTo[0][colIndex] = 0;
-        pointTo[0][colIndex] = topPoint;
+        pointTo[0][colIndex] = firstPoint;
       }
     }
     else
@@ -41,7 +41,7 @@ class PseudoSP
       for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
       {
         distTo[rowIndex][0] = 0;
-        pointTo[rowIndex][0] = topPoint;
+        pointTo[rowIndex][0] = firstPoint;
       }
     }
 
@@ -64,7 +64,7 @@ class PseudoSP
   private void relaxVerticalSeam(final SimplePoint point)
   {
     // check if the special top point
-    if (point.equals(topPoint))
+    if (point.equals(firstPoint))
     {
       for (int col = 0; col < picture.width(); ++col)
       {
@@ -109,7 +109,7 @@ class PseudoSP
   private void relaxHorizontalSeam(SimplePoint point)
   {
     // check if the special left-most point
-    if (point.equals(topPoint))
+    if (point.equals(firstPoint))
     {
       for (int row = 0; row < picture.height(); ++row)
       {
@@ -166,7 +166,7 @@ class PseudoSP
     Stack<SimplePoint> points = new Stack<>();
     SimplePoint point = pointToLastPoint;
     
-    while (!point.equals(topPoint))
+    while (!point.equals(firstPoint))
     {
       points.push(point);
       point = pointTo[point.rowIndex][point.colIndex];

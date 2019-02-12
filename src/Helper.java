@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.Picture;
 
 class Helper
 {
-  final static SimplePoint topPoint = new SimplePoint(0, -1);
+  final static SimplePoint firstPoint = new SimplePoint(0, -1);
 
   static <T> T requireNotNull(T object)
   {
