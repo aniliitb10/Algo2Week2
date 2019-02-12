@@ -65,11 +65,11 @@ public class SeamCarver
       {
         if (seam[colIndex] == rowIndex) continue;
 
-        picture.setRGB(colIndex, picRowCounter++, picture.getRGB(colIndex, rowIndex));
+        newPicture.setRGB(colIndex, picRowCounter++, picture.getRGB(colIndex, rowIndex));
       }
     }
 
-    this.picture = newPicture;
+    picture = newPicture;
   }
 
   // remove vertical seam from current picture
@@ -78,7 +78,7 @@ public class SeamCarver
     if (picture.width() <= 1) throw new IllegalArgumentException("Width of picture is " + picture.width());
     validateSeam(seam, true);
 
-    Picture newPicture = new Picture(picture.width(), picture.height() - 1);
+    Picture newPicture = new Picture(picture.width() -1, picture.height());
 
     for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
     {
@@ -88,11 +88,11 @@ public class SeamCarver
       {
         if (seam[rowIndex] == colIndex) continue;
 
-        picture.setRGB(picColCounter++, rowIndex, picture.getRGB(colIndex, rowIndex));
+        newPicture.setRGB(picColCounter++, rowIndex, picture.getRGB(colIndex, rowIndex));
       }
     }
 
-    this.picture = newPicture;
+    picture = newPicture;
   }
 
   private void validatePoint(int colIndex, int rowIndex)
@@ -120,17 +120,21 @@ public class SeamCarver
   private void validateSeam(int[] seam, boolean verticalSeam)
   {
     Helper.requireNotNull(seam);
+
+    if (verticalSeam && seam.length != picture.height()) throw new IllegalArgumentException("Invalid length: " + seam.length);
+    if (!verticalSeam && seam.length != picture.width()) throw new IllegalArgumentException("Invalid length: " + seam.length);
+
     int lastElem = seam[0];
 
-    if (verticalSeam) validateRowIndex(lastElem);
-    else              validateColumnIndex(lastElem);
+    if (verticalSeam) validateColumnIndex(lastElem);
+    else              validateRowIndex(lastElem);
 
     for (int index = 1; index < seam.length; ++index)
     {
       int latestElem = seam[index];
 
-      if (verticalSeam) validateRowIndex(latestElem);
-      else              validateColumnIndex(latestElem);
+      if (verticalSeam) validateColumnIndex(latestElem);
+      else              validateRowIndex(latestElem);
 
       if (Math.abs(latestElem - lastElem) > 1)
       {

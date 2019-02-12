@@ -17,7 +17,7 @@ class PseudoDFS
     {
       for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
       {
-        if (!visited[colIndex][rowIndex])
+        if (!visited[rowIndex][colIndex])
         {
           if (verticalSeam)
           {
@@ -35,22 +35,22 @@ class PseudoDFS
 
   private void verticalDfs(Picture picture, int colIndex, int rowIndex)
   {
-    visited[colIndex][rowIndex] = true;
+    visited[rowIndex][colIndex] = true;
 
     // below
-    if ((rowIndex < (picture.height() - 1)) && !visited[colIndex][rowIndex + 1])
+    if ((rowIndex < (picture.height() - 1)) && !visited[rowIndex + 1][colIndex])
     {
       verticalDfs(picture, colIndex, rowIndex + 1);
     }
 
     // left-below
-    if ((colIndex > 0) && (rowIndex < (picture.height() - 1)) && !visited[colIndex - 1][rowIndex + 1])
+    if ((colIndex > 0) && (rowIndex < (picture.height() - 1)) && !visited[rowIndex + 1][colIndex - 1])
     {
       verticalDfs(picture, colIndex - 1, rowIndex + 1);
     }
     
     // right-below
-    if ((colIndex < (picture.width() - 1)) && (rowIndex < (picture.height() - 1)) && !visited[colIndex + 1][rowIndex+1])
+    if ((colIndex < (picture.width() - 1)) && (rowIndex < (picture.height() - 1)) && !visited[rowIndex+1][colIndex + 1])
     {
       verticalDfs(picture, colIndex + 1, rowIndex + 1);
     }
@@ -60,27 +60,24 @@ class PseudoDFS
 
   private void horizontalDfs(Picture picture, int colIndex, int rowIndex)
   {
-    visited[colIndex][rowIndex] = true;
+    visited[rowIndex][colIndex] = true;
 
     // right
-    if ((colIndex < (picture.width() - 1)) && !visited[colIndex + 1][rowIndex])
+    if ((colIndex < (picture.width() - 1)) && !visited[rowIndex][colIndex + 1])
     {
-      if (!visited[colIndex+1][rowIndex])
-        horizontalDfs(picture, colIndex + 1, rowIndex);
+      horizontalDfs(picture, colIndex + 1, rowIndex);
     }
 
     // right-below
-    if ((colIndex < (picture.width() - 1)) && (rowIndex < (picture.height() - 1)) && !visited[colIndex + 1][rowIndex + 1])
+    if ((colIndex < (picture.width() - 1)) && (rowIndex < (picture.height() - 1)) && !visited[rowIndex + 1][colIndex + 1])
     {
-      if (!visited[colIndex+1][rowIndex+1])
-        horizontalDfs(picture, colIndex + 1, rowIndex + 1);
+      horizontalDfs(picture, colIndex + 1, rowIndex + 1);
     }
 
     // right-up
-    if ((colIndex < (picture.width() - 1)) && (rowIndex > 0) && !visited[colIndex + 1][rowIndex - 1])
+    if ((colIndex < (picture.width() - 1)) && (rowIndex > 0) && !visited[rowIndex - 1][colIndex + 1])
     {
-      if (!visited[colIndex+1][rowIndex-1])
-        horizontalDfs(picture, colIndex + 1, rowIndex - 1);
+      horizontalDfs(picture, colIndex + 1, rowIndex - 1);
     }
 
     reversePostOrder.push(new SimplePoint(colIndex, rowIndex));

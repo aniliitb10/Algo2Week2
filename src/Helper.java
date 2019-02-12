@@ -16,14 +16,14 @@ class Helper
   private static int getGreen(int rgb) { return rgb >> 8 & 255; }
   private static int getBlue(int rgb)  { return rgb & 255; }
 
-  static double energy(Picture picture, int rowIndex, int colIndex)
+  static double energy(Picture picture, int colIndex, int rowIndex)
   {
     if (rowIndex == picture.height()) // special top/bottom or left-most/right-most points
     {
       return 0.0;
     }
 
-    if (colIndex == 0 || rowIndex == 0 || colIndex == (picture.width() - 1) || rowIndex == (picture.width() -1 ))
+    if (colIndex == 0 || rowIndex == 0 || colIndex == (picture.width() - 1) || rowIndex == (picture.height() -1 ))
     {
       return 1000.0;
     }
