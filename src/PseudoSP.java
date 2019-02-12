@@ -7,16 +7,17 @@ class PseudoSP
 
   private final double[][] distTo;
   private final SimplePoint[][] pointTo;
+  private final int[][] rgb;
   private final Picture picture;
 
   private double distToLastPoint = Double.POSITIVE_INFINITY;
   private SimplePoint pointToLastPoint = null;
 
-  
   PseudoSP(Picture picture, boolean verticalSeam)
   {
     distTo = new double[picture.height()][picture.width()];
     pointTo = new SimplePoint[picture.height()][picture.width()];
+    rgb = new int[picture.height()][picture.width()];
     this.picture = picture;
 
     for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
@@ -43,6 +44,8 @@ class PseudoSP
         pointTo[rowIndex][0] = topPoint;
       }
     }
+
+    storeRGBValues();
 
     PseudoDFS dfs = new PseudoDFS(picture, verticalSeam);
     for (SimplePoint point : dfs.order())
@@ -150,7 +153,7 @@ class PseudoSP
   
   private void updatePoint(SimplePoint source, double sourceDist, int colIndex, int rowIndex)
   {
-    double energy = Helper.energy(picture, colIndex, rowIndex);
+    double energy = Helper.energy(picture, rgb, colIndex, rowIndex);
     if (distTo[rowIndex][colIndex] > sourceDist + energy)
     {
       distTo[rowIndex][colIndex] = sourceDist + energy;
@@ -188,5 +191,16 @@ class PseudoSP
     }
 
     return seam;
+  }
+
+  private void storeRGBValues()
+  {
+    for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
+    {
+      for (int colIndex = 0; colIndex < picture.width(); ++colIndex)
+      {
+        rgb[rowIndex][colIndex] = picture.getRGB(colIndex, rowIndex);
+      }
+    }
   }
 }

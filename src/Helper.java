@@ -18,23 +18,34 @@ class Helper
   private static int getGreen(int rgb) { return rgb >> 8 & 255; }
   private static int getBlue(int rgb)  { return rgb & 255; }
 
-  static double energy(Picture picture, int colIndex, int rowIndex)
+  static double energy(Picture picture, int[][] rgb, int colIndex, int rowIndex)
   {
     if (colIndex == 0 || rowIndex == 0 || colIndex == (picture.width() - 1) || rowIndex == (picture.height() -1 ))
     {
       return 1000.0;
     }
 
-    int leftRgb = picture.getRGB(colIndex-1, rowIndex);
-    int rightRgb = picture.getRGB(colIndex+1, rowIndex);
+    int leftRgb, rightRgb, topRgb, bottomRgb;
+
+    if (rgb == null)
+    {
+      leftRgb = picture.getRGB(colIndex-1, rowIndex);
+      rightRgb = picture.getRGB(colIndex+1, rowIndex);
+      topRgb = picture.getRGB(colIndex, rowIndex-1);
+      bottomRgb = picture.getRGB(colIndex, rowIndex+1);
+    }
+    else
+    {
+      leftRgb   = rgb[rowIndex][colIndex-1];
+      rightRgb  = rgb[rowIndex][colIndex+1];
+      topRgb    = rgb[rowIndex-1][colIndex];
+      bottomRgb = rgb[rowIndex+1][colIndex];
+    }
 
     int rx = Helper.getRed(leftRgb) - Helper.getRed(rightRgb);
     int gx = Helper.getGreen(leftRgb) - Helper.getGreen(rightRgb);
     int bx = Helper.getBlue(leftRgb) - Helper.getBlue(rightRgb);
     int xSquare = rx*rx + gx*gx + bx*bx;
-
-    int topRgb = picture.getRGB(colIndex, rowIndex-1);
-    int bottomRgb = picture.getRGB(colIndex, rowIndex+1);
 
     int ry = Helper.getRed(topRgb) - Helper.getRed(bottomRgb);
     int gy = Helper.getGreen(topRgb) - Helper.getGreen(bottomRgb);

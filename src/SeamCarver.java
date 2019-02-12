@@ -32,7 +32,7 @@ public class SeamCarver
   public double energy(int colIndex, int rowIndex)
   {
     validatePoint(colIndex, rowIndex);
-    return Helper.energy(picture, colIndex, rowIndex);
+    return Helper.energy(picture, null, colIndex, rowIndex);
   }
 
   // sequence of indices for horizontal seam
