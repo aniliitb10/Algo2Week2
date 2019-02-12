@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver
 {
-  private final Picture picture;
+  private Picture picture;
 
   // create a seam carver object based on the given picture
   public SeamCarver(Picture picture)
@@ -28,60 +28,117 @@ public class SeamCarver
     return picture.height();
   }
 
-  // energy of pixel at column x and row y
-  public double energy(int x, int y)
+  // energy of pixel at column colIndex and row rowIndex
+  public double energy(int colIndex, int rowIndex)
   {
-    validatePoint(x,y);
-
-    if (x == 0 || y == 0 || x == (width() - 1) || y == (height() -1 ))
-    {
-      return 1000.0;
-    }
-
-    int leftRgb = picture.getRGB(x-1, y);
-    int rightRgb = picture.getRGB(x+1, y);
-
-    int rx = Helper.getRed(leftRgb) + Helper.getRed(rightRgb);
-    int gx = Helper.getGreen(leftRgb) + Helper.getGreen(rightRgb);
-    int bx = Helper.getBlue(leftRgb) + Helper.getBlue(rightRgb);
-    int xSquare = rx*rx + gx*gx + bx*bx;
-
-    int topRgb = picture.getRGB(x, y-1);
-    int bottomRgb = picture.getRGB(x, y+1);
-
-    int ry = Helper.getRed(topRgb) + Helper.getRed(bottomRgb);
-    int gy = Helper.getGreen(topRgb) + Helper.getGreen(bottomRgb);
-    int by = Helper.getBlue(topRgb) + Helper.getBlue(bottomRgb);
-    int ySquare = ry*ry + gy*gy + by*by;
-
-    return Math.sqrt(xSquare + ySquare);
+    validatePoint(colIndex, rowIndex);
+    return Helper.energy(picture, colIndex, rowIndex);
   }
 
   // sequence of indices for horizontal seam
   public int[] findHorizontalSeam()
   {
-    return null;
+    PseudoSP sp = new PseudoSP(picture, false);
+    return sp.seamPoints(false);
   }
 
   // sequence of indices for vertical seam
   public int[] findVerticalSeam()
   {
-    return null;
+    PseudoSP sp = new PseudoSP(picture, true);
+    return sp.seamPoints(true);
   }
 
   // remove horizontal seam from current picture
   public void removeHorizontalSeam(int[] seam)
   {
+    if (picture.height() <= 1) throw new IllegalArgumentException("Height of picture is " + picture.height());
+    validateSeam(seam, false);
+
+    Picture newPicture = new Picture(picture.width(), picture.height() - 1);
+
+    for (int colIndex = 0; colIndex < picture.width(); ++colIndex)
+    {
+      int picRowCounter = 0;
+
+      for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
+      {
+        if (seam[colIndex] == rowIndex) continue;
+
+        picture.setRGB(colIndex, picRowCounter++, picture.getRGB(colIndex, rowIndex));
+      }
+    }
+
+    this.picture = newPicture;
   }
 
   // remove vertical seam from current picture
   public void removeVerticalSeam(int[] seam)
   {
+    if (picture.width() <= 1) throw new IllegalArgumentException("Width of picture is " + picture.width());
+    validateSeam(seam, true);
+
+    Picture newPicture = new Picture(picture.width(), picture.height() - 1);
+
+    for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
+    {
+      int picColCounter = 0;
+
+      for (int colIndex = 0; colIndex < picture.width(); ++colIndex)
+      {
+        if (seam[rowIndex] == colIndex) continue;
+
+        picture.setRGB(picColCounter++, rowIndex, picture.getRGB(colIndex, rowIndex));
+      }
+    }
+
+    this.picture = newPicture;
   }
 
-  public void validatePoint(int x, int y)
+  private void validatePoint(int colIndex, int rowIndex)
   {
-    if (x < 0 || y < 0) throw new IllegalArgumentException();
-    if (x >= width() || y >= height()) throw new IllegalArgumentException();
+    validateColumnIndex(colIndex);
+    validateRowIndex(rowIndex);
+  }
+
+  private void validateRowIndex(int rowIndex)
+  {
+    if (rowIndex < 0 || rowIndex >= picture.height())
+    {
+      throw new IllegalArgumentException("Invalid row index: " + rowIndex + ", valid range: [0," + picture.height() + ")");
+    }
+  }
+
+  private void validateColumnIndex(int colIndex)
+  {
+    if (colIndex < 0 || colIndex >= picture.width())
+    {
+      throw new IllegalArgumentException("Invalid column index: " + colIndex + ", valid range: [0," + picture.width() + ")");
+    }
+  }
+
+  private void validateSeam(int[] seam, boolean verticalSeam)
+  {
+    Helper.requireNotNull(seam);
+    int lastElem = seam[0];
+
+    if (verticalSeam) validateRowIndex(lastElem);
+    else              validateColumnIndex(lastElem);
+
+    for (int index = 1; index < seam.length; ++index)
+    {
+      int latestElem = seam[index];
+
+      if (verticalSeam) validateRowIndex(latestElem);
+      else              validateColumnIndex(latestElem);
+
+      if (Math.abs(latestElem - lastElem) > 1)
+      {
+        throw new IllegalArgumentException("The difference of adjacent entries should not exceed 1: seam[" + index
+         + "] - seam[" + (index - 1) + "] = " + Math.abs(latestElem - lastElem));
+      }
+
+      lastElem = latestElem;
+    }
   }
 }
