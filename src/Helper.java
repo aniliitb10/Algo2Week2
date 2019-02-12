@@ -31,17 +31,17 @@ class Helper
     int leftRgb = picture.getRGB(colIndex-1, rowIndex);
     int rightRgb = picture.getRGB(colIndex+1, rowIndex);
 
-    int rx = Helper.getRed(leftRgb) + Helper.getRed(rightRgb);
-    int gx = Helper.getGreen(leftRgb) + Helper.getGreen(rightRgb);
-    int bx = Helper.getBlue(leftRgb) + Helper.getBlue(rightRgb);
+    int rx = Helper.getRed(leftRgb) - Helper.getRed(rightRgb);
+    int gx = Helper.getGreen(leftRgb) - Helper.getGreen(rightRgb);
+    int bx = Helper.getBlue(leftRgb) - Helper.getBlue(rightRgb);
     int xSquare = rx*rx + gx*gx + bx*bx;
 
     int topRgb = picture.getRGB(colIndex, rowIndex-1);
     int bottomRgb = picture.getRGB(colIndex, rowIndex+1);
 
-    int ry = Helper.getRed(topRgb) + Helper.getRed(bottomRgb);
-    int gy = Helper.getGreen(topRgb) + Helper.getGreen(bottomRgb);
-    int by = Helper.getBlue(topRgb) + Helper.getBlue(bottomRgb);
+    int ry = Helper.getRed(topRgb) - Helper.getRed(bottomRgb);
+    int gy = Helper.getGreen(topRgb) - Helper.getGreen(bottomRgb);
+    int by = Helper.getBlue(topRgb) - Helper.getBlue(bottomRgb);
     int ySquare = ry*ry + gy*gy + by*by;
 
     return Math.sqrt(xSquare + ySquare);

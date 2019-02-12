@@ -8,7 +8,6 @@ class PseudoDFS
 
   PseudoDFS(Picture picture, boolean verticalSeam)
   {
-    //TODO: Is the dimension correct?
     visited = new boolean[picture.height()][picture.width()];
     reversePostOrder = new Stack<>();
 
