@@ -2,6 +2,8 @@ import edu.princeton.cs.algs4.Picture;
 
 class Helper
 {
+  final static SimplePoint topPoint = new SimplePoint(0, -1);
+
   static <T> T requireNotNull(T object)
   {
     if (object == null)
@@ -18,11 +20,6 @@ class Helper
 
   static double energy(Picture picture, int colIndex, int rowIndex)
   {
-    if (rowIndex == picture.height()) // special top/bottom or left-most/right-most points
-    {
-      return 0.0;
-    }
-
     if (colIndex == 0 || rowIndex == 0 || colIndex == (picture.width() - 1) || rowIndex == (picture.height() -1 ))
     {
       return 1000.0;

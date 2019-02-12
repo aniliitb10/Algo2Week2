@@ -11,7 +11,6 @@ class PseudoDFS
     visited = new boolean[picture.height()][picture.width()];
     reversePostOrder = new Stack<>();
 
-    reversePostOrder.push(new SimplePoint(1, picture.height()));
     for (int colIndex = 0; colIndex < picture.width(); ++colIndex)
     {
       for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
@@ -29,7 +28,8 @@ class PseudoDFS
         }
       }
     }
-    reversePostOrder.push(new SimplePoint(0, picture.height()));
+
+    reversePostOrder.push(Helper.topPoint);
   }
 
   private void verticalDfs(Picture picture, int colIndex, int rowIndex)

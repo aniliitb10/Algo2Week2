@@ -3,18 +3,21 @@ import edu.princeton.cs.algs4.Stack;
 
 class PseudoSP
 {
+  private static final SimplePoint topPoint = Helper.topPoint;
+
   private final double[][] distTo;
   private final SimplePoint[][] pointTo;
   private final Picture picture;
-  private final SimplePoint topPoint;
+
+  private double distToLastPoint = Double.POSITIVE_INFINITY;
+  private SimplePoint pointToLastPoint = null;
 
   
   PseudoSP(Picture picture, boolean verticalSeam)
   {
-    distTo = new double[picture.height() + 1][picture.width()]; // additional row for special points
-    pointTo = new SimplePoint[picture.height() + 1][picture.width()]; // additional row for special points
+    distTo = new double[picture.height()][picture.width()];
+    pointTo = new SimplePoint[picture.height()][picture.width()];
     this.picture = picture;
-    topPoint = new SimplePoint(0, picture.height());
 
     for (int rowIndex = 0; rowIndex < picture.height(); ++rowIndex)
     {
@@ -41,9 +44,6 @@ class PseudoSP
       }
     }
 
-    distTo[picture.height()][0] = 0; // top special point, it is the source!
-    distTo[picture.height()][1] = Double.POSITIVE_INFINITY; // bottom special point
-
     PseudoDFS dfs = new PseudoDFS(picture, verticalSeam);
     for (SimplePoint point : dfs.order())
     {
@@ -60,10 +60,6 @@ class PseudoSP
 
   private void relaxVerticalSeam(final SimplePoint point)
   {
-    final int colIndex = point.colIndex;
-    final int rowIndex = point.rowIndex;
-    final double pointDist = distTo[rowIndex][colIndex];
-
     // check if the special top point
     if (point.equals(topPoint))
     {
@@ -73,6 +69,10 @@ class PseudoSP
       }
       return;
     }
+
+    final int colIndex = point.colIndex;
+    final int rowIndex = point.rowIndex;
+    final double pointDist = distTo[rowIndex][colIndex];
 
     // below
     if ((rowIndex < (picture.height() - 1)))
@@ -95,16 +95,16 @@ class PseudoSP
     // for bottom row to reach out to special bottom point
     if (rowIndex == picture.height() - 1)
     {
-      updatePoint(point, pointDist, 1, picture.height());
+      if (distToLastPoint > pointDist)
+      {
+        distToLastPoint = pointDist;
+        pointToLastPoint = point;
+      }
     }
   }
 
   private void relaxHorizontalSeam(SimplePoint point)
   {
-    int colIndex = point.colIndex;
-    int rowIndex = point.rowIndex;
-    final double pointDist = distTo[rowIndex][colIndex];
-
     // check if the special left-most point
     if (point.equals(topPoint))
     {
@@ -114,6 +114,10 @@ class PseudoSP
       }
       return;
     }
+
+    int colIndex = point.colIndex;
+    int rowIndex = point.rowIndex;
+    final double pointDist = distTo[rowIndex][colIndex];
 
     // right
     if (colIndex < (picture.width() - 1))
@@ -136,7 +140,11 @@ class PseudoSP
     // for right-most row to reach out to special bottom point
     if (colIndex == picture.width() - 1)
     {
-      updatePoint(point, pointDist, 1, picture.height());
+      if (distToLastPoint > pointDist)
+      {
+        distToLastPoint = pointDist;
+        pointToLastPoint = point;
+      }
     }
   }
   
@@ -153,9 +161,9 @@ class PseudoSP
   int[] seamPoints(boolean verticalSeam)
   {
     Stack<SimplePoint> points = new Stack<>();
-    SimplePoint point = pointTo[picture.height()][1];
+    SimplePoint point = pointToLastPoint;
     
-    while (pointTo[point.rowIndex][point.colIndex] != null)
+    while (!point.equals(topPoint))
     {
       points.push(point);
       point = pointTo[point.rowIndex][point.colIndex];

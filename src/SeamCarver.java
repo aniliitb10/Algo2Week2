@@ -7,13 +7,13 @@ public class SeamCarver
   // create a seam carver object based on the given picture
   public SeamCarver(Picture picture)
   {
-    this.picture = Helper.requireNotNull(picture);
+    this.picture = new Picture(Helper.requireNotNull(picture));
   }
 
   // current picture
   public Picture picture()
   {
-    return picture;
+    return new Picture(picture);
   }
 
   // width of current picture
